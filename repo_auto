@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# revisa que si tenga como parametro el nombre del repo
+if [ -z "$1" ]; then
+    echo "Por favor, proporciona el nombre del repositorio como parámetro."
+    exit 1
+fi
+
+# asigna el parametro a variable
+REPO_NAME=$1
+
+# Configura tus credenciales de GitHub (reemplaza con tu usuario y token)
+USERNAME="XXXXX"
+TOKEN="XXXXX"
+
+# Crea el repositorio en GitHub y lo vuelve privado
+curl -u ${USERNAME}:${TOKEN} https://api.github.com/user/repos -d '{"name":"'${REPO_NAME}'", "private": true}'
+
+# Crea el README con el nombre del repositorio
+echo "# ${REPO_NAME}" > README.md
+
+# Inicializa un repositorio local y realiza el primer commit
+git init
+git add README.md
+git commit -m "Initial commit"
+
+# Crea las ramas develop, release y master, y elimina la rama main
+git branch -m main master
+git checkout -b develop
+git checkout -b release
+git checkout master
+#git branch -d main
+
+# Configura el control remoto 'origin'
+git remote add origin https://${USERNAME}:${TOKEN}@github.com/${USERNAME}/${REPO_NAME}.git
+
+# Sube las ramas al repositorio en GitHub 
+git push -u --all origin
+
+#Configura master por defecto
+curl -u ${USERNAME}:${TOKEN} -X PATCH \
+  -H "Accept: application/vnd.github.v3+json" \
+  https://api.github.com/repos/${USERNAME}/${REPO_NAME} \
+  -d '{"default_branch":"master"}'
+
+# Configura reglas de protección
+  BRANCH="develop"
+curl -u GuillermoITV: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 -X PUT \
+  -H "Accept: application/vnd.github.luke-cage-preview+json" \
+  https://api.github.com/repos/${USERNAME}/${REPO_NAME}/branches/develop/protection \
+  -d '{"required_status_checks": null, "enforce_admins": true, "required_pull_request_reviews": {"require_code_owner_reviews": false, "required_approving_review_count": 2}, "restrictions": null, "dismiss_stale_reviews": true, "require_pull_request_before_merge": true}'
