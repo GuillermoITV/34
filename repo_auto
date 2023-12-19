@@ -43,7 +43,7 @@ curl -u ${USERNAME}:${TOKEN} -X PATCH \
   https://api.github.com/repos/${USERNAME}/${REPO_NAME} \
   -d '{"default_branch":"master"}'
 
-# Configura reglas de protección
+# Configura reglas de protección sobre la rama develop
   BRANCH="develop"
 curl -u GuillermoITV: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 -X PUT \
   -H "Accept: application/vnd.github.luke-cage-preview+json" \
