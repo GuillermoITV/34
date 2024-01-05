@@ -1,5 +1,16 @@
-# Obtén el ID del equipo
-team_id=$(gh api orgs/<nombre-de-la-organizacion>/teams/<nombre-del-equipo> --jq '.id')
+# Definir las variables
+ORGANIZATION=<nombre-de-la-organizacion>
+TEAM=<nombre-del-equipo>
+REPOSITORY=<propietario>/<repositorio>
 
-# Agrega el equipo al repositorio con permisos de escritura
-gh api repos/<propietario>/<repositorio>/teams/$team_id --input - <<< '{"permission": "push"}'
+# Obtener el token de acceso personal (reemplaza con tu token)
+ACCESS_TOKEN=<tu-token-de-acceso-personal>
+
+# Obtener el ID del equipo
+team_id=$(curl -s -H "Authorization: token $ACCESS_TOKEN" \
+  "https://tu-servidor-github/api/v3/orgs/$ORGANIZATION/teams/$TEAM" | jq -r '.id')
+
+# Agregar el equipo al repositorio con permisos de escritura
+curl -X PUT -H "Authorization: token $ACCESS_TOKEN" \
+  "https://tu-servidor-github/api/v3/repos/$REPOSITORY/teams/$team_id" \
+  -d '{"permission": "push"}'
