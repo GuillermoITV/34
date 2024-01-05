@@ -8,9 +8,10 @@ ACCESS_TOKEN=<tu-token-de-acceso-personal>
 
 # Obtener el ID del equipo
 team_id=$(curl -s -H "Authorization: token $ACCESS_TOKEN" \
-  "https://tu-servidor-github/api/v3/orgs/$ORGANIZATION/teams/$TEAM" | jq -r '.id')
+  "https://tu-servidor-github/api/v3/orgs/$ORGANIZATION/teams/$TEAM" | grep -o '"id":[^,]*' | awk -F':' '{print $2}')
 
 # Agregar el equipo al repositorio con permisos de escritura
 curl -X PUT -H "Authorization: token $ACCESS_TOKEN" \
   "https://tu-servidor-github/api/v3/repos/$REPOSITORY/teams/$team_id" \
   -d '{"permission": "push"}'
+
