@@ -1,0 +1,5 @@
+# Obtén el ID del equipo
+team_id=$(gh api orgs/<nombre-de-la-organizacion>/teams/<nombre-del-equipo> --jq '.id')
+
+# Agrega el equipo al repositorio con permisos de escritura
+gh api repos/<propietario>/<repositorio>/teams/$team_id --input - <<< '{"permission": "push"}'
