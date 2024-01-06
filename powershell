@@ -8,13 +8,11 @@ Import-Module ImportExcel
 $rutaArchivoExcel = "C:\Ruta\Al\Archivo.xlsx"
 
 # Obtener el valor de la última celda en la columna G
-$valorUltimaCelda = (Get-ExcelSheet -Path $rutaArchivoExcel -WorksheetName "NombreDeLaHoja" | 
-                    Get-ExcelColumn -ColumnName G | 
-                    Get-ExcelRange).End.Row
-
-# Obtener el valor de la última celda en la columna G
-$valorUltimaCeldaG = (Get-ExcelSheet -Path $rutaArchivoExcel -WorksheetName "NombreDeLaHoja" | 
-                      Get-ExcelCell -Address "G$valorUltimaCelda").Text
+$valorUltimaCeldaG = (Import-Excel -Path $rutaArchivoExcel -WorksheetName "NombreDeLaHoja" | 
+                      Sort-Object G -Descending | 
+                      Select-Object -First 1 -Property G).G
 
 # Imprimir el valor de la última celda en la columna G
 Write-Host "El valor de la última celda en la columna G es: $valorUltimaCeldaG"
+
+
