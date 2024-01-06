@@ -7,11 +7,11 @@ Import-Module ImportExcel
 # Ruta al archivo Excel
 $rutaArchivoExcel = "C:\Ruta\Al\Archivo.xlsx"
 
-# Obtener el valor de la última celda en la columna G
-$ultimaFila = (Import-Excel -Path $rutaArchivoExcel -WorksheetName "NombreDeLaHoja" | 
-               Where-Object { $_.G -ne $null } |  # Filtrar celdas que no son nulas
-               Sort-Object G -Descending | 
-               Select-Object -First 1).PSTypeNames["G"].BaseName
+# Obtener la última celda en la columna G
+$ultimaCeldaG = (Import-Excel -Path $rutaArchivoExcel -WorksheetName "NombreDeLaHoja" | 
+                 Where-Object { $_.G -ne $null } |  # Filtrar celdas que no son nulas
+                 Sort-Object G -Descending | 
+                 Select-Object -First 1)
 
-# Imprimir el número de la última fila en la columna G
-Write-Host "El número de la última fila en la columna G es: $ultimaFila"
+# Imprimir la dirección de la última celda en la columna G
+Write-Host "La dirección de la última celda en la columna G es: $($ultimaCeldaG.Address)"
