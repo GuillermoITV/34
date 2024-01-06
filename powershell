@@ -1,0 +1,20 @@
+# Instalar el módulo ImportExcel (puede requerir permisos de administrador)
+# Install-Module -Name ImportExcel -Force -Scope CurrentUser
+
+# Importar el módulo ImportExcel
+Import-Module ImportExcel
+
+# Ruta al archivo Excel
+$rutaArchivoExcel = "C:\Ruta\Al\Archivo.xlsx"
+
+# Obtener el valor de la última celda en la columna G
+$valorUltimaCelda = (Get-ExcelSheet -Path $rutaArchivoExcel -WorksheetName "NombreDeLaHoja" | 
+                    Get-ExcelColumn -ColumnName G | 
+                    Get-ExcelRange).End.Row
+
+# Obtener el valor de la última celda en la columna G
+$valorUltimaCeldaG = (Get-ExcelSheet -Path $rutaArchivoExcel -WorksheetName "NombreDeLaHoja" | 
+                      Get-ExcelCell -Address "G$valorUltimaCelda").Text
+
+# Imprimir el valor de la última celda en la columna G
+Write-Host "El valor de la última celda en la columna G es: $valorUltimaCeldaG"
