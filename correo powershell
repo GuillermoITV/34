@@ -1,0 +1,16 @@
+# Crear una instancia de Outlook
+$outlook = New-Object -ComObject Outlook.Application
+
+# Crear un nuevo objeto de correo
+$mail = $outlook.CreateItem(0)
+
+# Configurar los detalles del correo (asunto, cuerpo, destinatarios, etc.)
+$mail.Subject = "Asunto del Correo"
+$mail.Body = "Cuerpo del Correo"
+$mail.To = "destinatario@example.com"
+
+# Enviar el correo
+$mail.Send()
+
+# Imprimir un mensaje indicando que se ha enviado el correo
+Write-Host "Se ha enviado el correo desde Outlook."
