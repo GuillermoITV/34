@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Verificar si se proporcionaron los argumentos necesarios
+if [ "$#" -lt 2 ]; then
+  echo "Uso: $0 <nombre_proyecto> <mensaje_commit_pull_request>"
+  exit 1
+fi
+
+# Variables
+nombre_proyecto="$1"
+mensaje_commit_pull_request="$2"
+directorio_principal="directorio_principal"
+directorio_proyecto="proyecto_$nombre_proyecto"
+archivo_test="test.txt"
+
+# Crear la estructura de carpetas y archivo
+mkdir -p "$directorio_principal/$directorio_proyecto"
+touch "$directorio_principal/$directorio_proyecto/$archivo_test"
+
+# Cambiar al directorio del repositorio Local
+cd /ruta/a/tu/repositorio/Local || exit
+
+# Añadir los cambios y hacer un commit
+git add .
+git commit -m "$mensaje_commit_pull_request"
+
+# Hacer un push al repositorio Local
+git push origin master
+
+# Crear un Pull Request al repositorio global en tu servidor privado
+gh pr create --base master --head master --title "$mensaje_commit_pull_request" --body "$mensaje_commit_pull_request" --repo "tu-servidor-github.com/usuario/repositorio"
+
+# Volver al directorio original
+cd -
+
+echo "El script se ejecutó exitosamente."
