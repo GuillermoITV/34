@@ -1,0 +1,7 @@
+    # Obtener los dos últimos archivos
+    $archivo1 = $archivos[-1].BaseName
+    $archivo2 = $archivos[-2].BaseName
+
+    # Extraer los números de los nombres de archivo
+    $numero1 = [int]($archivo1 -replace '.*\((\d+)\).*', '$1')
+    $numero2 = [int]($archivo2 -replace '.*\((\d+)\).*', '$1')
