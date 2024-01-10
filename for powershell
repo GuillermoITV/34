@@ -1,0 +1,7 @@
+# Reemplaza el valor de $ciclos con tu número deseado
+$ciclos = 5
+
+# Ciclo for descendente
+for ($i = $ciclos; $i -ge 1; $i--) {
+    Write-Host "Iteración $i"
+}
