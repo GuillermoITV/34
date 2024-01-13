@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Variables
+GITHUB_API="https://qwerrt.poiuy.com/api/v3"  # Reemplaza con la URL de tu servidor GitHub Enterprise
+OWNER="nombre_del_propietario"
+REPO="nombre_del_repositorio"
+ACCESS_TOKEN="tu_token_de_acceso_personal"
+
+# URL de tu servidor donde se recibirá el payload del webhook
+WEBHOOK_URL="https://tu_servidor.com/webhook-endpoint"
+
+# Configurar el payload para el webhook
+PAYLOAD='{
+  "name": "web",
+  "active": true,
+  "events": ["push", "pull_request"],
+  "config": {
+    "url": "'"$WEBHOOK_URL"'",
+    "content_type": "json",
+    "secret": "tu_secreto_del_webhook"
+  }
+}'
+
+# Agregar el webhook utilizando la API de GitHub Enterprise
+curl -X POST \
+  -H "Authorization: token $ACCESS_TOKEN" \
+  -H "Accept: application/vnd.github.v3+json" \
+  "$GITHUB_API/repos/$OWNER/$REPO/hooks" \
+  -d "$PAYLOAD"
