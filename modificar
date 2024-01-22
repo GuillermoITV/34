@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Verificar si el número correcto de argumentos fue proporcionado
+if [ "$#" -ne 5 ]; then
+  echo "Uso: $0 <nombre_usuario> <nombre_equipo> <agregar|eliminar> <nuevo_permiso: read|write|admin> <nombre_repositorio>"
+  exit 1
+fi
+
+usuario=$1
+equipo=$2
+accion=$3
+nuevo_permiso=$4
+nombre_repositorio=$5
+token="tu_token_de_acceso"  # Reemplaza con tu token de acceso de GitHub
+
+# Verificar si el repositorio existe en GitHub
+repo_existente=$(curl -s -H "Authorization: token $token" "https://api.github.com/repos/$usuario/$nombre_repositorio")
+
+error_message=$(echo "$repo_existente" | grep -o '"message": ".*"')
+
+if [ -z "$error_message" ]; then
+  echo "El repositorio existe."
+
+  # Obtener el ID del equipo (puedes ajustar esto según tu configuración)
+  team_id=$(curl -s -H "Authorization: token $token" "https://api.github.com/orgs/$usuario/teams" | grep -oP '"id": \K\d+' | head -n1)
+
+  if [ "$accion" == "agregar" ]; then
+    # Agregar el equipo al repositorio en GitHub (ejemplo: utilizando la API GraphQL)
+    curl -X POST \
+      -H "Authorization: token $token" \
+      -d "{\"query\":\"mutation { addTeamRepository(teamId: $team_id, repositoryId: <ID_DEL_REPOSITORIO>) { clientMutationId } }\"}" \
+      "https://api.github.com/graphql"
+    
+    echo "Equipo agregado con éxito al repositorio."
+  elif [ "$accion" == "eliminar" ]; then
+    # Eliminar el equipo del repositorio en GitHub (ejemplo: utilizando la API GraphQL)
+    curl -X POST \
+      -H "Authorization: token $token" \
+      -d "{\"query\":\"mutation { removeTeamRepository(teamId: $team_id, repositoryId: <ID_DEL_REPOSITORIO>) { clientMutationId } }\"}" \
+      "https://api.github.com/graphql"
+    
+    echo "Equipo eliminado con éxito del repositorio."
+  else
+    echo "La acción especificada no es válida. Debe ser 'agregar' o 'eliminar'."
+    exit 1
+  fi
+
+  # Actualizar los permisos del equipo en el repositorio en GitHub
+  # Mapear permisos a valores de la API GraphQL
+  case "$nuevo_permiso" in
+    "read")
+      permission="PULL"
+      ;;
+    "write")
+      permission="PUSH"
+      ;;
+    "admin")
+      permission="ADMIN"
+      ;;
+    *)
+      echo "Permiso no válido. Debe ser 'read', 'write' o 'admin'."
+      exit 1
+      ;;
+  esac
+
+  # Actualizar los permisos del equipo en el repositorio en GitHub
+  curl -X POST \
+    -H "Authorization: token $token" \
+    -d "{\"query\":\"mutation { updateTeamRepository(teamId: $team_id, repositoryId: <ID_DEL_REPOSITORIO>, permission: $permission) { clientMutationId } }\"}" \
+    "https://api.github.com/graphql"
+
+  echo "Permisos del equipo actualizados con éxito en el repositorio."
+else
+  echo "El repositorio no existe en GitHub."
+fi
